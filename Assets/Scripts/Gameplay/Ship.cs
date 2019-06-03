@@ -61,15 +61,15 @@ public class Ship : MonoBehaviour {
     {
         turning = true;
 
-        var direction = point - transform.position;
-        direction.z = transform.position.z;
+        point = point - transform.position;
+        point.z = transform.position.z;
 
         var startRotation = transform.rotation;
-        var endRotation = Quaternion.LookRotation(direction, Vector3.back);
+        var endRotation = Quaternion.LookRotation(point, Vector3.back);
 
-        var angle = Quaternion.Angle(startRotation, endRotation);
+        var time = Quaternion.Angle(startRotation, endRotation) / rotationSpeed;
 
-        for (var t = 0f; t < 1f; t += Time.deltaTime / angle)
+        for (var t = 0f; t < 1f; t += Time.deltaTime / time)
         {
             transform.rotation = Quaternion.Slerp(startRotation, endRotation, t);
             yield return 0;

@@ -9,7 +9,7 @@ public class UserInputHandler : MonoBehaviour
 
     public float tapMaxMovement = 50f;
     private Vector2 movement;
-    private bool tapGestureFailed = false;
+    private bool tapGestureFailed;
 
     void Start()
     {
