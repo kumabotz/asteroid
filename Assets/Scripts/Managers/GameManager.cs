@@ -2,7 +2,7 @@
 using System.Collections;
 
 // Singleton to manage the game state.
-public class GameManager : MonoBehaviour {
+public class GameManager : Singleton<GameManager> {
 
 	#region PRIVATE VARIABLES
 	private int maxNumLives = 3;
@@ -14,28 +14,6 @@ public class GameManager : MonoBehaviour {
 	public float cameraHalfHeight;
 
 	private Camera mainCamera;
-	#endregion
-
-	#region SINGLETON PATTERN
-	public static GameManager _instance;
-	
-	public static GameManager Instance
-	{
-		get {
-			if (_instance == null)
-			{
-				_instance = GameObject.FindObjectOfType<GameManager>();
-				
-				if (_instance == null)
-				{
-					GameObject container = new GameObject("Game Manager");
-					_instance = container.AddComponent<GameManager>();
-				}
-			}
-			
-			return _instance;
-		}
-	}
 	#endregion
 
 	#region MONOBEHAVIOUR METHODS

@@ -32,8 +32,8 @@ public class Asteroid : MonoBehaviour {
 
 	void Awake()
 	{
-		gameManager = GameManager.Instance;
-		spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        gameManager = GameManager.Instance;
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 		polyCollider = (PolygonCollider2D)GetComponent<Collider2D>();
 	}
 

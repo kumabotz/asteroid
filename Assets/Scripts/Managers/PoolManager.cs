@@ -11,8 +11,7 @@ public class ObjectToPool
 }
 
 // Singleton for managing pools of different objects.
-public class PoolManager : MonoBehaviour {
-    // TODO extract singleton
+public class PoolManager : Singleton<PoolManager> {
 	#region PUBLIC VARIABLES
 	// Objects to be pooled at initialization.
 	public ObjectToPool[] prefabsToPool;
@@ -20,28 +19,6 @@ public class PoolManager : MonoBehaviour {
 
 	#region PRIVATE VARIABLES
 	private Dictionary<string, ObjectPool> pools;
-	#endregion
-
-	#region SINGLETON PATTERN
-	public static PoolManager _instance;
-	
-	public static PoolManager Instance
-	{
-		get {
-			if (_instance == null)
-			{
-				_instance = GameObject.FindObjectOfType<PoolManager>();
-				
-				if (_instance == null)
-				{
-					GameObject container = new GameObject("Pool Manager");
-					_instance = container.AddComponent<PoolManager>();
-				}
-			}
-			
-			return _instance;
-		}
-	}
 	#endregion
 
 	#region MONOBEHAVIOUR METHODS
