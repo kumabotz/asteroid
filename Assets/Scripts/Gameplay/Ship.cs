@@ -3,7 +3,6 @@ using System.Collections;
 
 // Class for the ship object.
 public class Ship : MonoBehaviour {
-
 	#region PUBLIC VARIABLES
 	// The rotation speed of the ship, in degrees per second.
 	public float rotationSpeed = 180f;
@@ -20,18 +19,22 @@ public class Ship : MonoBehaviour {
 
 	private GameManager gameManager;
 
-	private bool turning = false;
+	private bool turning;
 	#endregion
 
 	#region MONOBEHAVIOUR METHODS
     void OnEnable()
     {
         UserInputHandler.OnTap += TurnTowardsTouch;
+        UserInputHandler.OnPanBegan += StopTurn;
+        UserInputHandler.OnPanHeld += MoveTowardsTouch;
     }
 
     void OnDisable()
     {
         UserInputHandler.OnTap -= TurnTowardsTouch;
+        UserInputHandler.OnPanBegan -= StopTurn;
+        UserInputHandler.OnPanHeld -= MoveTowardsTouch;
     }
 
     void Start()
@@ -55,6 +58,30 @@ public class Ship : MonoBehaviour {
         var targetPoint = Camera.main.ScreenToWorldPoint(t.position);
         StopCoroutine(TURN_COROUTINE_NAME);
         StartCoroutine(TURN_COROUTINE_NAME, targetPoint);
+    }
+
+    private void MoveTowardsTouch(Touch t)
+    {
+        var targetPoint = Camera.main.ScreenToWorldPoint(t.position);
+        GetComponent<Rigidbody2D>().AddForce(transform.forward * movementSpeed * Time.deltaTime);
+        TurnTowardsPointUpdate(targetPoint);
+    }
+
+    private void StopTurn(Touch t)
+    {
+        StopCoroutine(TURN_COROUTINE_NAME);
+        turning = false;
+    }
+
+    private void TurnTowardsPointUpdate(Vector3 point)
+    {
+        point = point - transform.position;
+        point.z = transform.position.z;
+
+        var startRotation = transform.rotation;
+        var endRotation = Quaternion.LookRotation(point, Vector3.back);
+
+        transform.rotation = Quaternion.RotateTowards(startRotation, endRotation, rotationSpeed * Time.deltaTime);
     }
 
     private IEnumerator TurnTowardsPointAndShootCoroutine(Vector3 point)
