@@ -337,6 +337,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 2fd535fccf4a94c299b82b9421f51143, type: 3}
+      propertyPath: useAccelerometer
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2fd535fccf4a94c299b82b9421f51143, type: 3}
 --- !u!1 &1646653371
@@ -443,4 +447,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc69ba1db75ce984a9a27aad375b7d20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  panMinTime: 0.4
   tapMaxMovement: 50

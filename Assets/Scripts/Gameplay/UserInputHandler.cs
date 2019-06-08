@@ -14,6 +14,9 @@ public class UserInputHandler : MonoBehaviour
     public delegate void PanEndedAction(Touch t);
     public static event PanEndedAction OnPanEnded;
 
+    public delegate void AccelerometerChangedAction(Vector3 acceleration);
+    public static event AccelerometerChangedAction OnAccelerometerChanged;
+
     /// <summary>
     /// Minimum time to hold the finger on the screen to register as a pan gesture
     /// </summary>
@@ -28,6 +31,13 @@ public class UserInputHandler : MonoBehaviour
     public float tapMaxMovement = 50f;
     private Vector2 movement;
     private bool tapGestureFailed;
+
+    private Vector3 defaultAcceleration;
+
+    private void OnEnable()
+    {
+        defaultAcceleration = new Vector3(Input.acceleration.x, Input.acceleration.y, -Input.acceleration.z);
+    }
 
     void Update()
     {
@@ -77,6 +87,13 @@ public class UserInputHandler : MonoBehaviour
                 panGestureRecognized = false;
                 tapGestureFailed = false;
             }
+        }
+
+        if (OnAccelerometerChanged != null)
+        {
+            var acceleration = new Vector3(Input.acceleration.x, Input.acceleration.y, -Input.acceleration.z);
+            acceleration -= defaultAcceleration;
+            OnAccelerometerChanged(acceleration);
         }
     }
 }

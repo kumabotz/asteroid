@@ -4,6 +4,8 @@ using System.Collections;
 // Class for the ship object.
 public class Ship : MonoBehaviour {
 	#region PUBLIC VARIABLES
+    public bool useAccelerometer;
+
 	// The rotation speed of the ship, in degrees per second.
 	public float rotationSpeed = 180f;
 
@@ -25,16 +27,30 @@ public class Ship : MonoBehaviour {
 	#region MONOBEHAVIOUR METHODS
     void OnEnable()
     {
+        if (useAccelerometer)
+        {
+            UserInputHandler.OnAccelerometerChanged += MoveWithAcceleration;
+        }
+        else
+        {
+            UserInputHandler.OnPanBegan += StopTurn;
+            UserInputHandler.OnPanHeld += MoveTowardsTouch;
+        }
         UserInputHandler.OnTap += TurnTowardsTouch;
-        UserInputHandler.OnPanBegan += StopTurn;
-        UserInputHandler.OnPanHeld += MoveTowardsTouch;
     }
 
     void OnDisable()
     {
+        if (useAccelerometer)
+        {
+            UserInputHandler.OnAccelerometerChanged -= MoveWithAcceleration;
+        }
+        else
+        {
+            UserInputHandler.OnPanBegan -= StopTurn;
+            UserInputHandler.OnPanHeld -= MoveTowardsTouch;
+        }
         UserInputHandler.OnTap -= TurnTowardsTouch;
-        UserInputHandler.OnPanBegan -= StopTurn;
-        UserInputHandler.OnPanHeld -= MoveTowardsTouch;
     }
 
     void Start()
@@ -49,9 +65,24 @@ public class Ship : MonoBehaviour {
 		gameManager.LoseLife();
 		StartCoroutine(StartInvincibilityTimer(2.5f));
 	}
-	#endregion
+    #endregion
 
-	#region PRIVATE METHODS
+    #region PRIVATE METHODS
+    private void MoveWithAcceleration(Vector3 acceleration)
+    {
+        if (turning)
+        {
+            return;
+        }
+
+        acceleration.z = 0;
+        if (acceleration.sqrMagnitude >= 0.03f)
+        {
+            var targetPoint = transform.position + acceleration;
+            TurnTowardsPointUpdate(targetPoint);
+            GetComponent<Rigidbody2D>().AddForce(transform.forward * movementSpeed * Time.deltaTime);
+        }
+    }
 
     private void TurnTowardsTouch(Touch t)
     {
@@ -75,6 +106,7 @@ public class Ship : MonoBehaviour {
 
     private void TurnTowardsPointUpdate(Vector3 point)
     {
+        turning = true;
         point = point - transform.position;
         point.z = transform.position.z;
 
@@ -82,6 +114,7 @@ public class Ship : MonoBehaviour {
         var endRotation = Quaternion.LookRotation(point, Vector3.back);
 
         transform.rotation = Quaternion.RotateTowards(startRotation, endRotation, rotationSpeed * Time.deltaTime);
+        turning = false;
     }
 
     private IEnumerator TurnTowardsPointAndShootCoroutine(Vector3 point)
